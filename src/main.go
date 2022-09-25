@@ -16,21 +16,29 @@
 package main
 
 import (
-    "fmt"
-	httpServer "httpServer"
+	httpServer "driver/httpServer"
+	"fmt"
 	"os"
 	"regexp"
 )
 
 func main() {
-    defaultPort := "9000"
+	defaultPort := "9001"
+
+	// for saving request logs
+	defaultPath := "main.log"
+
 	validPort := regexp.MustCompile(`^[0-9]+$`)
 	server := httpServer.GetServerInstance()
 	if len(os.Args) > 1 && validPort.MatchString(os.Args[1]) {
 		fmt.Println("Starting driver on port: " + os.Args[1])
-		server.Start(os.Args[1])
+		if len(os.Args) > 2 {
+			fmt.Println("Using Path: " + os.Args[2])
+			defaultPath = os.Args[2]
+		}
+		server.Start(os.Args[1], defaultPath)
 	} else {
 		fmt.Println("Starting driver on port: " + defaultPort)
-		server.Start(defaultPort)
+		server.Start(defaultPort, defaultPath)
 	}
 }
